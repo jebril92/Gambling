@@ -1,0 +1,71 @@
+############################################
+#                  Arena                   #
+############################################
+
+ARENA:
+  WORLD: "world"
+  POS1: "21.5,64,12.5"
+  POS2: "21.5,64,-3.5"
+ARENA-NAME: "arene" # For worldGuard
+PERMISSION-BYPASS: "gambling.bypass"
+
+ARENA-MENU:
+  INVENTORY-SIZE: 27
+  INVENTORY-NAME: "&f» &6Arena"
+  GLASS:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    - 21
+    - 22
+    - 23
+    - 24
+    - 25
+    - 26
+  GLASS-DATA: 15
+  GLASS-NAME: " "
+  POS:
+    1:
+      MATERIAL: ANVIL
+      SLOT: 11
+      NAME: "&f» &6First position"
+      LORE:
+        - "&8&m-----------------------"
+        - ""
+        - "&8» &eClick to set position"
+        - "&8» &ePosition: &6<position>"
+        - ""
+        - "&8&m-----------------------"
+    2:
+      MATERIAL: ANVIL
+      SLOT: 15
+      NAME: "&f» &6Second position"
+      LORE:
+        - "&8&m-----------------------"
+        - ""
+        - "&8» &eClick to set position"
+        - "&8» &ePosition: &6<position>"
+        - ""
+        - "&8&m-----------------------"
+
+ARENA-SET-POS: "&ePosition number <pos> set up"
+
+USE: "&6/garena &eEdit the arena positions"

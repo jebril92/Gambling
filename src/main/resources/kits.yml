@@ -1,0 +1,62 @@
+KIT-MENU:
+  INVENTORY-SIZE: 45
+  INVENTORY-NAME: "&f» &6Kits"
+  GLASS:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 17
+    - 18
+    - 26
+    - 27
+    - 35
+    - 36
+    - 37
+    - 38
+    - 39
+    - 40
+    - 41
+    - 42
+    - 43
+    - 44
+  GLASS-DATA: 1
+  GLASS-NAME: " "
+  KIT:
+    NAME: "&f» &6"
+    LORE:
+      - "&8&m------------------"
+      - ""
+      - "&8» &eClick to view the <kit> kit."
+      - ""
+      - "&8&m------------------"
+  BACK:
+    SLOT: 36
+    MATERIAL: BARRIER
+    NAME: "&cRetour &7(Gambling)"
+
+KIT-VIEW:
+  INVENTORY-SIZE: 54
+  INVENTORY-NAME: "&f» &6"
+  GLASS:
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+  GLASS-DATA: 14
+  GLASS-NAME: "&c✘"
+  BACK:
+    MATERIAL: BARRIER
+    NAME: "&cRetour"
+
+ADMIN-PERM: "command.gkit.admin"

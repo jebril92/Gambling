@@ -1,0 +1,6 @@
+name: gambling
+version: '1.0'
+main: fr.wivern.gambling.Gambling
+commands:
+  gambling:
+    aliases: [pg]
