@@ -4,3 +4,5 @@ main: fr.wivern.gambling.Gambling
 commands:
   gambling:
     aliases: [pg]
+  gkit:
+  garena:
