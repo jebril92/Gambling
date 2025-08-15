@@ -19,30 +19,66 @@ public class GArenaListener implements Listener {
 
     @EventHandler
     public void onClicArena(InventoryClickEvent event) {
-        if (event.getCurrentItem() != null && event.getCurrentItem().getType() != null) {
-            Player player = (Player)event.getWhoClicked();
-            if (event.getInventory().getName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', this.gambling.getInventoryManager().inventoryName(this.gambling.getArenaConfig().getString("ARENA-MENU.INVENTORY-NAME"))))) {
-                event.setCancelled(true);
-                String location;
-                if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.getMaterial(this.gambling.getArenaConfig().getString("ARENA-MENU.POS.1.MATERIAL")) && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-MENU.POS.1.NAME")))) {
-                    location = round(player.getLocation().getX(), 2) + "," + round(player.getLocation().getY(), 2) + "," + round(player.getLocation().getZ(), 2) + "," + round((double)player.getLocation().getYaw(), 2) + "," + round((double)player.getLocation().getPitch(), 2);
-                    this.gambling.getArenaConfig().set("ARENA.POS1", location);
-                    this.gambling.getArenaConfig().set("ARENA.WORLD", player.getWorld().getName());
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-SET-POS").replace("<pos>", "1")));
-                    this.gambling.getArenaConfig().save("");
-                    player.closeInventory();
-                }
+        // Vérifications null de sécurité
+        if (event.getCurrentItem() == null ||
+                event.getCurrentItem().getType() == null ||
+                event.getInventory() == null ||
+                event.getInventory().getName() == null) {
+            return;
+        }
 
-                if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.getMaterial(this.gambling.getArenaConfig().getString("ARENA-MENU.POS.2.MATERIAL")) && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-MENU.POS.2.NAME")))) {
-                    location = round(player.getLocation().getX(), 2) + "," + round(player.getLocation().getY(), 2) + "," + round(player.getLocation().getZ(), 2) + "," + round((double)player.getLocation().getYaw(), 2) + "," + round((double)player.getLocation().getPitch(), 2);
-                    this.gambling.getArenaConfig().set("ARENA.POS2", location);
-                    this.gambling.getArenaConfig().set("ARENA.WORLD", player.getWorld().getName());
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-SET-POS").replace("<pos>", "2")));
-                    this.gambling.getArenaConfig().save("");
-                    player.closeInventory();
-                }
-            }
+        Player player = (Player)event.getWhoClicked();
+        String arenaMenuName = ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-MENU.INVENTORY-NAME"));
 
+        if (!event.getInventory().getName().equalsIgnoreCase(arenaMenuName)) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        // Vérifications null pour les métadonnées
+        if (!event.getCurrentItem().hasItemMeta() ||
+                event.getCurrentItem().getItemMeta() == null ||
+                event.getCurrentItem().getItemMeta().getDisplayName() == null) {
+            return;
+        }
+
+        Material pos1Material = Material.getMaterial(this.gambling.getArenaConfig().getString("ARENA-MENU.POS.1.MATERIAL"));
+        String pos1Name = ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-MENU.POS.1.NAME"));
+        Material pos2Material = Material.getMaterial(this.gambling.getArenaConfig().getString("ARENA-MENU.POS.2.MATERIAL"));
+        String pos2Name = ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-MENU.POS.2.NAME"));
+
+        String location;
+        if (pos1Material != null && pos1Name != null &&
+                event.getCurrentItem().getType() == pos1Material &&
+                event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(pos1Name)) {
+
+            location = round(player.getLocation().getX(), 2) + "," +
+                    round(player.getLocation().getY(), 2) + "," +
+                    round(player.getLocation().getZ(), 2) + "," +
+                    round((double)player.getLocation().getYaw(), 2) + "," +
+                    round((double)player.getLocation().getPitch(), 2);
+            this.gambling.getArenaConfig().set("ARENA.POS1", location);
+            this.gambling.getArenaConfig().set("ARENA.WORLD", player.getWorld().getName());
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-SET-POS").replace("<pos>", "1")));
+            this.gambling.getArenaConfig().save("");
+            player.closeInventory();
+        }
+
+        if (pos2Material != null && pos2Name != null &&
+                event.getCurrentItem().getType() == pos2Material &&
+                event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(pos2Name)) {
+
+            location = round(player.getLocation().getX(), 2) + "," +
+                    round(player.getLocation().getY(), 2) + "," +
+                    round(player.getLocation().getZ(), 2) + "," +
+                    round((double)player.getLocation().getYaw(), 2) + "," +
+                    round((double)player.getLocation().getPitch(), 2);
+            this.gambling.getArenaConfig().set("ARENA.POS2", location);
+            this.gambling.getArenaConfig().set("ARENA.WORLD", player.getWorld().getName());
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.gambling.getArenaConfig().getString("ARENA-SET-POS").replace("<pos>", "2")));
+            this.gambling.getArenaConfig().save("");
+            player.closeInventory();
         }
     }
 

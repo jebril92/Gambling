@@ -62,7 +62,7 @@ GAMBLING-MENU:
       - "&7&m----------------------------------------------------------------"
       - ""
       - "&6» &eClick to see what the player put to bet."
-      - "&6» &eYou can bet money or an item. Fight more to win more !"
+      - "&6» &eYou can bet money to fight and win more !"
       - ""
       - "&8» &eKit: <kit>"
       - ""
@@ -123,7 +123,7 @@ GAMBLING-MENU-MAIN:
       - ""
       - "&6» &6Select duel against player and watch list of waiting queue."
       - ""
-      - "&7&o» Possible to bet money or item."
+      - "&7&o» Only money betting available."
       - ""
       - "&7&m----------------------------------------------------------------"
   FIGHT:
@@ -133,81 +133,17 @@ GAMBLING-MENU-MAIN:
     LORE:
       - "&7&m----------------------------------------------------------------"
       - ""
-      - "&6» &6Select mechanics game and start fight against player"
+      - "&6» &6Start fight against player with money bet"
       - ""
-      - "&7&o» Possible to bet money or item."
-      - ""
-      - "&7&m----------------------------------------------------------------"
-
-############################################
-#        Inventory gambling fight          #
-############################################
-
-CANCEL: "&cYou canceled the creation of gambling."
-START-SLOT-KIT: 20
-GAMBLING-CREATE:
-  INVENTORY-SIZE: 45
-  INVENTORY-NAME: "&6» &eCreate Gambling"
-  GLASS:
-    - 0
-    - 1
-    - 2
-    - 3
-    - 4
-    - 5
-    - 6
-    - 7
-    - 8
-    - 9
-    - 17
-    - 18
-    - 26
-    - 27
-    - 35
-    - 36
-    - 37
-    - 38
-    - 39
-    - 40
-    - 41
-    - 42
-    - 43
-    - 44
-  GLASS-DATA: 1
-  GLASS-NAME: " "
-  MONEY:
-    SLOT: 21
-    MATERIAL: ANVIL
-    NAME: "&6» &6Use Money"
-    LORE:
-      - "&7&m----------------------------------------------------------------"
-      - ""
-      - "&6» &6This mechanics is for bet money."
-      - ""
-      - "&7&o» Good Luck!"
+      - "&7&o» Only money betting available."
       - ""
       - "&7&m----------------------------------------------------------------"
-  ITEM:
-    SLOT: 23
-    MATERIAL: BOOK_AND_QUILL
-    NAME: "&6» &6Use item"
-    LORE:
-      - "&7&m----------------------------------------------------------------"
-      - ""
-      - "&6» &6This mechanics is for bet item."
-      - ""
-      - "&7&o» Good Luck!"
-      - ""
-      - "&7&m----------------------------------------------------------------"
-MESSAGE-CREATE-MONEY: "&eWrite in the chat the number of money you want to bet. To cancel, write &6cancel&e."
-MESSAGE-CREATE-ITEM: "&eTake item in your hand and write on the chat &6item &eto accept. To cancel, write &6cancel&e."
-CANNOT-USE-COMMAND: "&eYou cannot use this command because you are going to start gambling. To cancel, write &6cancel&e."
-NOT-AVAILABLE-MONEY: "&cThis is not a number!"
 
 ############################################
 #         Inventory kit selector           #
 ############################################
 
+CANCEL: "&cYou canceled the creation of gambling."
 KIT-SELECTOR:
   START-SLOT: 20
   INVENTORY-SIZE: 45
@@ -248,6 +184,10 @@ KIT-SELECTOR:
       - ""
       - "&8&m---------------------------------------------------------"
 
+MESSAGE-CREATE-MONEY: "&eWrite in the chat the number of money you want to bet. To cancel, write &6cancel&e."
+CANNOT-USE-COMMAND: "&eYou cannot use this command because you are going to start gambling. To cancel, write &6cancel&e."
+NOT-AVAILABLE-MONEY: "&cThis is not a number!"
+
 ############################################
 #            Inventory claim               #
 ############################################
@@ -261,50 +201,50 @@ GAMBLING-CLAIM:
   WIN:
     SLOT: 10
     MATERIAL: EMERALD_BLOCK
-    NAME: "&6» &eClaim win item"
+    NAME: "&6» &eClaim win money"
     LORE:
       - "&8&m---------------------------------------------------------"
       - ""
-      - "&a• &6Clic to claim your win item."
-      - "&6» &7&oThe item is stored here when your inventory is full."
+      - "&a• &6Clic to claim your win money."
+      - "&6» &7&oThe money is stored here when there's an issue."
       - ""
       - "&8&m---------------------------------------------------------"
-    MESSAGE: "&cYou don't have any item to collect since you haven't won a duel recently."
+    MESSAGE: "&cYou don't have any money to collect since you haven't won a duel recently."
   LEAVE:
     SLOT: 12
     MATERIAL: IRON_BLOCK
-    NAME: "&6» &eClaim leave item"
+    NAME: "&6» &eClaim leave money"
     LORE:
       - "&8&m---------------------------------------------------------"
       - ""
-      - "&a• &6Clic to claim your item when you have leave."
-      - "&6» &7&oThe item is stored here when your inventory is full."
+      - "&a• &6Clic to claim your money when you have leave."
+      - "&6» &7&oThe money is stored here when there's an issue."
       - ""
       - "&8&m---------------------------------------------------------"
-    MESSAGE: "&cYou don't have any item to collect since you haven't leave waiting queue recently."
+    MESSAGE: "&cYou don't have any money to collect since you haven't leave waiting queue recently."
   CRASH:
     SLOT: 14
     MATERIAL: REDSTONE_BLOCK
-    NAME: "&6» &eClaim crash item"
+    NAME: "&6» &eClaim crash money"
     LORE:
       - "&8&m---------------------------------------------------------"
       - ""
-      - "&a• &6Clic to claim the item you have bet when server has crash"
-      - "&6» &7&oThe item is stored here when your inventory is full."
+      - "&a• &6Clic to claim the money you have bet when server has crash"
+      - "&6» &7&oThe money is stored here when there's an issue."
       - ""
       - "&8&m---------------------------------------------------------"
   BET:
     SLOT: 16
     MATERIAL: DIAMOND_BLOCK
-    NAME: "&6» &eClaim bet item"
+    NAME: "&6» &eClaim bet money"
     LORE:
       - "&8&m---------------------------------------------------------"
       - ""
-      - "&a• &6Clic to claim your bet item."
-      - "&6» &7&oThe item is stored here when your inventory is full."
+      - "&a• &6Clic to claim your bet money."
+      - "&6» &7&oThe money is stored here when there's an issue."
       - ""
       - "&8&m---------------------------------------------------------"
-    MESSAGE: "&cYou don't have any item to collect since you haven't crash during server reboot."
+    MESSAGE: "&cYou don't have any money to collect since you haven't crash during server reboot."
 
 ############################################
 #            Inventory preview             #
@@ -359,8 +299,6 @@ GAMBLING-VIEW:
         - ""
         - "&a• &eClick on the emerald torch to start the duel."
         - ""
-    ITEM:
-      SLOT: 22
 
 ############################################
 #             Win multiplicator            #
@@ -375,8 +313,6 @@ MULTIPLICATOR: 2
 COMMANDS-ENABLED:
   - "/feed"
 
-DISABLED-ITEM:
-  - "REDSTONE"
 ############################################
 #                 Language                 #
 ############################################
@@ -396,7 +332,6 @@ GAMBLING-END:
 GAMBLING-HELP:
   - ""
   - "&6/gambling create <kit> <money> &eStart a game by betting money"
-  - "&6/gambling create <kit> item &eStart a game by betting the item in your hand"
   - "&6/gambling leave &eQuit Gambling"
   - "&6/gkit &eView kits"
   - ""
@@ -407,14 +342,9 @@ GAMBLING-HELP-ADMIN:
   - "&6/gkit icon <name> &eSet icon with item in your hand"
   - "&6/garena &eOpen arena admin manager"
   - ""
-  -
+
 CANNOT-LAUNCH-ITEM: "&cYou cannot throw items."
 COMMAND-DISABLED: "&cThis command is disabled during your match."
-
-DONT-HAVE-ITEM: "&cYou don't have <item> in your inventory."
-ITEM-NOT-SAME-ENCHANT: "&c<item> does not have the same enchant."
-DONT-HAVE-ANY: "&cYou don't have <item> in your inventory to start the match."
-ITEM-DISABLED: "&cYou cannot use this item in gambling."
 
 CANNOT-DUEL-YOURSELF: "&cYou cannot gambling yourself."
 CANNOT-DUEL-FACTION-MEMBER: "&cYou cannot gambling faction member."
@@ -444,8 +374,6 @@ ARENA-LEAVE-DENY: "&cYou cannot quit on this arena"
 KIT-EXIST: "&cThis kit already exists"
 SMALL-MONEY: "&cLimit money of bet is <money>."
 KIT-ICON: "&aIcon for the kit <kit> update !"
-
-DIFFERENCE: "&cThe item <item> in your inventory does not have enough durability."
 
 ALREADY-GAMBLING: "&cYou are already in gambling"
 

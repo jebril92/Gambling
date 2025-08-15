@@ -89,15 +89,8 @@ public class GamblingListener implements Listener {
     public void onDisconnect(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (this.gambling.getMatchManager().getPlayerWaitMap().containsKey(player)) {
-            if (((PlayerData)this.gambling.getMatchManager().getPlayerWaitMap().get(player)).isUseMoney()) {
-                this.gambling.getEconomy().depositPlayer(player, ((PlayerData)this.gambling.getMatchManager().getPlayerWaitMap().get(player)).getMoney());
-            } else {
-                this.config = new Config(this.gambling, player.getName(), "items");
-                ItemStack[] itemStacks = new ItemStack[]{((PlayerData)this.gambling.getMatchManager().getPlayerWaitMap().get(player)).getItemStack()};
-                this.config.set("bet", Base64Save.itemStackArrayToBase64(itemStacks));
-                this.config.save("items");
-            }
-
+            // Seulement pour l'argent maintenant
+            this.gambling.getEconomy().depositPlayer(player, ((PlayerData)this.gambling.getMatchManager().getPlayerWaitMap().get(player)).getMoney());
             this.gambling.getMatchManager().getPlayerWaitMap().remove(player);
         }
 
@@ -109,7 +102,6 @@ public class GamblingListener implements Listener {
             this.config.save("players");
             this.gambling.getMatchManager().endMatch(target, player);
         }
-
     }
 
     @EventHandler

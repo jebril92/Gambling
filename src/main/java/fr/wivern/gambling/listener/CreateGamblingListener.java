@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.inventory.ItemStack;
 
 public class CreateGamblingListener implements Listener {
     private final Gambling gambling;
@@ -20,34 +19,22 @@ public class CreateGamblingListener implements Listener {
 
     @EventHandler
     public void processCommand(PlayerCommandPreprocessEvent event) {
-        if (this.gambling.getGamblingManager().getPlayerMoneyWait().contains(event.getPlayer()) || this.gambling.getGamblingManager().getPlayerItemWait().contains(event.getPlayer())) {
+        if (this.gambling.getGamblingManager().getPlayerMoneyWait().contains(event.getPlayer())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(this.gambling.getConfigManager().getString("CANNOT-USE-COMMAND"));
         }
-
     }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         String message = event.getMessage();
-        if (message.equalsIgnoreCase("item") && this.gambling.getGamblingManager().getPlayerItemWait().contains(event.getPlayer())) {
-            event.setCancelled(true);
-            if (this.gambling.getDisabledMaterialManager().getMaterialList().contains(player.getItemInHand().getType())) {
-                player.sendMessage(this.gambling.getConfigManager().getString("ITEM-DISABLED"));
-                return;
-            }
 
-            this.gambling.getKitManager().openKitSelector(player);
-            this.gambling.getGamblingManager().removePlayerItem(player);
-            this.gambling.getGamblingManager().getPlayerItem().put(player, player.getItemInHand());
-        }
-
-        if (message.equalsIgnoreCase("cancel") && (this.gambling.getGamblingManager().getPlayerItemWait().contains(event.getPlayer()) || this.gambling.getGamblingManager().getPlayerMoneyWait().contains(event.getPlayer()))) {
+        if (message.equalsIgnoreCase("cancel") && this.gambling.getGamblingManager().getPlayerMoneyWait().contains(event.getPlayer())) {
             event.setCancelled(true);
-            this.gambling.getGamblingManager().removePlayerItem(player);
             this.gambling.getGamblingManager().removePlayerMoney(player);
             player.sendMessage(this.gambling.getConfigManager().getString("CANCEL"));
+            return;
         }
 
         if (this.gambling.getGamblingManager().getPlayerMoneyWait().contains(event.getPlayer())) {
@@ -73,33 +60,56 @@ public class CreateGamblingListener implements Listener {
                 player.sendMessage(this.gambling.getConfigManager().getString("NOT-AVAILABLE-MONEY"));
             }
         }
-
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getName().equalsIgnoreCase(this.gambling.getConfigManager().getString("KIT-SELECTOR.INVENTORY-NAME"))) {
-            event.setCancelled(true);
-            if (event.getCurrentItem() == null || event.getCurrentItem().getType() == null || !event.getCurrentItem().hasItemMeta() || event.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) {
-                return;
-            }
-
-            String kitName = event.getCurrentItem().getItemMeta().getDisplayName();
-            String newName = kitName.replace(ChatColor.translateAlternateColorCodes('&', this.gambling.getConfigManager().getString("KIT-SELECTOR.KIT.NAME")), "");
-            Player player = (Player)event.getWhoClicked();
-            if (this.gambling.getGamblingManager().getPlayerMoney().containsKey(player)) {
-                player.performCommand("gambling create " + newName + " " + this.gambling.getGamblingManager().getPlayerMoney().get(player));
-                player.closeInventory();
-                this.gambling.getGamblingManager().getPlayerMoney().remove(player);
-            }
-
-            if (this.gambling.getGamblingManager().getPlayerItem().containsKey(player)) {
-                player.performCommand("gambling create " + newName + " item");
-                player.getInventory().removeItem(new ItemStack[]{(ItemStack)this.gambling.getGamblingManager().getPlayerItem().get(player)});
-                player.closeInventory();
-                this.gambling.getGamblingManager().getPlayerItem().remove(player);
-            }
+        // Vérifications null de sécurité
+        if (event.getInventory() == null || event.getInventory().getName() == null) {
+            return;
         }
 
+        if (!event.getInventory().getName().equalsIgnoreCase(this.gambling.getConfigManager().getString("KIT-SELECTOR.INVENTORY-NAME"))) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        // Vérifications null pour l'item
+        if (event.getCurrentItem() == null ||
+                event.getCurrentItem().getType() == null ||
+                !event.getCurrentItem().hasItemMeta() ||
+                event.getCurrentItem().getType() == Material.STAINED_GLASS_PANE ||
+                event.getCurrentItem().getItemMeta() == null ||
+                event.getCurrentItem().getItemMeta().getDisplayName() == null) {
+            return;
+        }
+
+        String kitDisplayName = event.getCurrentItem().getItemMeta().getDisplayName();
+        String kitPrefix = this.gambling.getConfigManager().getString("KIT-SELECTOR.KIT.NAME");
+
+        if (kitPrefix == null) {
+            ((Player)event.getWhoClicked()).sendMessage("§cErreur: Configuration KIT-SELECTOR.KIT.NAME manquante");
+            return;
+        }
+
+        // Nettoyer le nom du kit en supprimant les codes de couleur ET le préfixe
+        String translatedPrefix = ChatColor.translateAlternateColorCodes('&', kitPrefix);
+        String kitName = ChatColor.stripColor(kitDisplayName.replace(translatedPrefix, ""));
+
+        Player player = (Player)event.getWhoClicked();
+
+        // Debug pour voir le nom du kit
+        player.sendMessage("§eDEBUG - Kit sélectionné: '" + kitName + "'");
+
+        if (this.gambling.getGamblingManager().getPlayerMoney().containsKey(player)) {
+            int money = this.gambling.getGamblingManager().getPlayerMoney().get(player);
+            player.performCommand("gambling create " + kitName + " " + money);
+            player.closeInventory();
+            this.gambling.getGamblingManager().getPlayerMoney().remove(player);
+        } else {
+            player.sendMessage("§cErreur: Aucun montant trouvé pour vous.");
+            player.closeInventory();
+        }
     }
 }

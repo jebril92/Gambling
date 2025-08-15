@@ -24,81 +24,206 @@ public class GKitListener implements Listener {
     @EventHandler
     public void onKitClic(InventoryClickEvent event) {
         Player player = (Player)event.getWhoClicked();
-        if (event.getCurrentItem() != null && event.getCurrentItem().getType() != null) {
-            if (event.getInventory().getName().equalsIgnoreCase(this.gambling.getInventoryManager().inventoryName(ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-MENU.INVENTORY-NAME"))))) {
-                event.setCancelled(true);
-                if (event.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) {
-                    event.setCancelled(true);
-                    return;
-                }
 
-                if (event.getCurrentItem().getType() == Material.getMaterial(this.gambling.getKitConfig().getString("KIT-MENU.BACK.MATERIAL")) && event.getCurrentItem().hasItemMeta() && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-MENU.BACK.NAME")))) {
-                    this.gambling.getInventoryManager().openInventory(player);
-                } else if (event.getCurrentItem().hasItemMeta() && !event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-MENU.BACK.NAME")))) {
-                    String kitName = event.getCurrentItem().getItemMeta().getDisplayName();
-                    String newName = kitName.replace(ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-MENU.KIT.NAME")), "");
-                    this.openInventoryKit(newName, player, this.gambling.getKitManager().getKitArmor(newName), this.gambling.getKitManager().getKitStuff(newName));
-                } else {
-                    event.setCancelled(true);
+        // Vérifications null de sécurité
+        if (event.getCurrentItem() == null ||
+                event.getCurrentItem().getType() == null ||
+                event.getInventory() == null ||
+                event.getInventory().getName() == null) {
+            return;
+        }
+
+        // Protection contre les valeurs null de configuration
+        String kitMenuNameConfig = this.gambling.getKitConfig().getString("KIT-MENU.INVENTORY-NAME");
+        if (kitMenuNameConfig == null) {
+            player.sendMessage("§cErreur: Configuration KIT-MENU.INVENTORY-NAME manquante");
+            return;
+        }
+
+        String kitMenuName = ChatColor.translateAlternateColorCodes('&', kitMenuNameConfig);
+
+        if (!event.getInventory().getName().equalsIgnoreCase(kitMenuName)) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        if (event.getCurrentItem().getType() == Material.STAINED_GLASS_PANE) {
+            return;
+        }
+
+        String backMaterialName = this.gambling.getKitConfig().getString("KIT-MENU.BACK.MATERIAL");
+        Material backMaterial = backMaterialName != null ? Material.getMaterial(backMaterialName) : null;
+        String backNameConfig = this.gambling.getKitConfig().getString("KIT-MENU.BACK.NAME");
+
+        if (backMaterial != null && backNameConfig != null &&
+                event.getCurrentItem().getType() == backMaterial &&
+                event.getCurrentItem().hasItemMeta() &&
+                event.getCurrentItem().getItemMeta() != null &&
+                event.getCurrentItem().getItemMeta().getDisplayName() != null &&
+                event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', backNameConfig))) {
+            this.gambling.getInventoryManager().openInventory(player);
+            return;
+        }
+
+        if (event.getCurrentItem().hasItemMeta() &&
+                event.getCurrentItem().getItemMeta() != null &&
+                event.getCurrentItem().getItemMeta().getDisplayName() != null &&
+                backNameConfig != null &&
+                !event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', backNameConfig))) {
+
+            String kitDisplayName = event.getCurrentItem().getItemMeta().getDisplayName();
+            String kitPrefixConfig = this.gambling.getKitConfig().getString("KIT-MENU.KIT.NAME");
+
+            if (kitPrefixConfig != null) {
+                String translatedPrefix = ChatColor.translateAlternateColorCodes('&', kitPrefixConfig);
+                String kitName = ChatColor.stripColor(kitDisplayName.replace(translatedPrefix, ""));
+
+                try {
+                    ItemStack[] armor = this.gambling.getKitManager().getKitArmor(kitName);
+                    ItemStack[] stuff = this.gambling.getKitManager().getKitStuff(kitName);
+
+                    if (armor != null && stuff != null) {
+                        this.openInventoryKit(kitName, player, armor, stuff);
+                    }
+                } catch (Exception e) {
+                    player.sendMessage("§cErreur lors de l'ouverture du kit: " + e.getMessage());
                 }
             }
-
         }
     }
 
     @EventHandler
     public void onPreviewClic(InventoryClickEvent event) {
         Player player = (Player)event.getWhoClicked();
-        if (event.getCurrentItem() != null && event.getCurrentItem().getType() != null) {
-            String inventoryName = event.getInventory().getName();
-            String newName = inventoryName.replace(ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-VIEW.INVENTORY-NAME")), "");
-            if (this.gambling.getKitManager().getKitByName(newName) != null) {
-                if (!event.getCurrentItem().hasItemMeta()) {
-                    event.setCancelled(true);
-                }
 
-                if (event.getCurrentItem().getType() == Material.getMaterial(this.gambling.getKitConfig().getString("KIT-VIEW.BACK.MATERIAL")) && event.getCurrentItem().hasItemMeta() && event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-VIEW.BACK.NAME")))) {
-                    Inventory inventory = Bukkit.createInventory((InventoryHolder)null, this.gambling.getKitConfig().getInt("KIT-MENU.INVENTORY-SIZE"), ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-MENU.INVENTORY-NAME")));
-                    this.gambling.getKitManager().openKitsMenu(inventory, player);
-                }
+        // Vérifications null de sécurité
+        if (event.getCurrentItem() == null ||
+                event.getCurrentItem().getType() == null ||
+                event.getInventory() == null ||
+                event.getInventory().getName() == null) {
+            return;
+        }
 
-                event.setCancelled(true);
+        String inventoryName = event.getInventory().getName();
+        String kitViewPrefixConfig = this.gambling.getKitConfig().getString("KIT-VIEW.INVENTORY-NAME");
+
+        if (kitViewPrefixConfig == null) {
+            return;
+        }
+
+        String kitViewPrefix = ChatColor.translateAlternateColorCodes('&', kitViewPrefixConfig);
+
+        if (!inventoryName.startsWith(kitViewPrefix)) {
+            return;
+        }
+
+        String kitName = inventoryName.replace(kitViewPrefix, "");
+
+        if (this.gambling.getKitManager().getKitByName(kitName) == null) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        if (!event.getCurrentItem().hasItemMeta() ||
+                event.getCurrentItem().getItemMeta() == null) {
+            return;
+        }
+
+        String backMaterialName = this.gambling.getKitConfig().getString("KIT-VIEW.BACK.MATERIAL");
+        Material backMaterial = backMaterialName != null ? Material.getMaterial(backMaterialName) : null;
+        String backNameConfig = this.gambling.getKitConfig().getString("KIT-VIEW.BACK.NAME");
+
+        if (backMaterial != null && backNameConfig != null &&
+                event.getCurrentItem().getType() == backMaterial &&
+                event.getCurrentItem().getItemMeta().getDisplayName() != null &&
+                event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', backNameConfig))) {
+
+            String kitMenuNameConfig = this.gambling.getKitConfig().getString("KIT-MENU.INVENTORY-NAME");
+            if (kitMenuNameConfig != null) {
+                Inventory inventory = Bukkit.createInventory((InventoryHolder)null,
+                        this.gambling.getKitConfig().getInt("KIT-MENU.INVENTORY-SIZE"),
+                        ChatColor.translateAlternateColorCodes('&', kitMenuNameConfig));
+                this.gambling.getKitManager().openKitsMenu(inventory, player);
             }
-
         }
     }
 
     public void openInventoryKit(String kitName, Player player, ItemStack[] armorContents, ItemStack[] contents) {
-        Inventory inventory = Bukkit.createInventory((InventoryHolder)null, this.gambling.getKitConfig().getInt("KIT-VIEW.INVENTORY-SIZE"), ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-VIEW.INVENTORY-NAME") + kitName));
-        ItemStack[] var6 = armorContents;
-        int data = armorContents.length;
-
-        int var8;
-        for(var8 = 0; var8 < data; ++var8) {
-            ItemStack items = var6[var8];
-            inventory.addItem(new ItemStack[]{items});
+        if (kitName == null || armorContents == null || contents == null) {
+            return;
         }
 
+        String kitViewNameConfig = this.gambling.getKitConfig().getString("KIT-VIEW.INVENTORY-NAME");
+        if (kitViewNameConfig == null) {
+            player.sendMessage("§cErreur: Configuration KIT-VIEW.INVENTORY-NAME manquante");
+            return;
+        }
+
+        String kitViewName = ChatColor.translateAlternateColorCodes('&', kitViewNameConfig);
+
+        Inventory inventory = Bukkit.createInventory((InventoryHolder)null,
+                this.gambling.getKitConfig().getInt("KIT-VIEW.INVENTORY-SIZE"),
+                kitViewName + kitName);
+
+        // Ajouter les armures
+        for (ItemStack armor : armorContents) {
+            if (armor != null) {
+                inventory.addItem(armor);
+            }
+        }
+
+        // Ajouter les items à partir du slot 18
         int startPlace = 17;
-        ItemStack[] var12 = contents;
-        var8 = contents.length;
-
-        for(int var14 = 0; var14 < var8; ++var14) {
-            ItemStack items = var12[var14];
-            ++startPlace;
-            inventory.setItem(startPlace, items);
+        for (ItemStack item : contents) {
+            startPlace++;
+            if (startPlace < inventory.getSize()) {
+                inventory.setItem(startPlace, item);
+            }
         }
 
-        data = this.gambling.getKitConfig().getInt("KIT-VIEW.GLASS-DATA");
-        String glassName = ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-MENU.GLASS-NAME"));
-        Iterator var15 = this.gambling.getKitConfig().getStringList("KIT-VIEW.GLASS").iterator();
+        // Ajouter les items de verre
+        try {
+            int glassData = this.gambling.getKitConfig().getInt("KIT-VIEW.GLASS-DATA");
+            String glassNameConfig = this.gambling.getKitConfig().getString("KIT-MENU.GLASS-NAME");
 
-        while(var15.hasNext()) {
-            String values = (String)var15.next();
-            inventory.setItem(Integer.parseInt(values), (new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte)data)).setName(glassName).toItemStack());
+            if (glassNameConfig != null) {
+                String translatedGlassName = ChatColor.translateAlternateColorCodes('&', glassNameConfig);
+                Iterator<String> glassSlots = this.gambling.getKitConfig().getStringList("KIT-VIEW.GLASS").iterator();
+
+                while (glassSlots.hasNext()) {
+                    String slotStr = glassSlots.next();
+                    try {
+                        int slot = Integer.parseInt(slotStr);
+                        if (slot >= 0 && slot < inventory.getSize()) {
+                            inventory.setItem(slot, (new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte)glassData)).setName(translatedGlassName).toItemStack());
+                        }
+                    } catch (NumberFormatException e) {
+                        // Ignorer les slots invalides
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Ignorer les erreurs de configuration des verres
         }
 
-        inventory.setItem(17, (new ItemBuilder(Material.getMaterial(this.gambling.getKitConfig().getString("KIT-VIEW.BACK.MATERIAL")))).setName(ChatColor.translateAlternateColorCodes('&', this.gambling.getKitConfig().getString("KIT-VIEW.BACK.NAME"))).toItemStack());
+        // Ajouter le bouton retour
+        try {
+            String backMaterialName = this.gambling.getKitConfig().getString("KIT-VIEW.BACK.MATERIAL");
+            Material backMaterial = backMaterialName != null ? Material.getMaterial(backMaterialName) : null;
+            String backNameConfig = this.gambling.getKitConfig().getString("KIT-VIEW.BACK.NAME");
+
+            if (backMaterial != null && backNameConfig != null) {
+                ItemStack backButton = (new ItemBuilder(backMaterial))
+                        .setName(ChatColor.translateAlternateColorCodes('&', backNameConfig))
+                        .toItemStack();
+                inventory.setItem(17, backButton);
+            }
+        } catch (Exception e) {
+            // Ignorer les erreurs de configuration du bouton retour
+        }
+
         player.openInventory(inventory);
     }
 }
